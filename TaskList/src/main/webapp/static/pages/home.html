@@ -1,0 +1,55 @@
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-3" ng-repeat="taskList in taskLists track by $index">
+            <div class="row">
+               <div class="col-md-12" >
+                   <h4 ng-if="!taskList_editable">{{taskList.title}}</h4>
+                   <h4 ng-if="taskList_editable">Title:
+                       <input  type="text" size="8px" ng-bind="taskList.title" />
+                   </h4>
+                   <button type="button" class="btn btn-link" id="cancel" ng-if="taskList_editable" ng-click="cancelTaskList()">
+                       cancel</button>
+                   <button type="button" class="btn btn-link editTaskList"  ng-click="editTaskList(taskList)">Edit</button>
+               </div>
+            </div>
+
+            <div >
+                <h4><button class="button">Share</button></h4>
+            </div>
+            <ul class="list-group" >
+                <li class="list-group-item " ng-repeat="task in taskList.tasks">
+                    <div class="card">
+                        <div class="card-block">
+                            <del ng-if="task.completed"><h4 class="card-title" ng-if="!task_editable">{{task.title}}</h4>
+                            </del>
+                            <h4 class="card-title" ng-if="!task_editable && !task.completed">{{task.title}}</h4>
+                            <button type="button" class="btn btn-link" ng-if="task_editable" id="cancel" ng-click="cancel()">
+                                cancel</button>
+                            <button type="button" class="btn btn-link editTask"  ng-click="editTask(task)">Edit</button>
+                            <p ng-if="task_editable">Title:
+                                <input class="card-tile" type="text" size="10px" ng-bind="task.title" />
+                            </p>
+                            <p class="card-text" ng-if="task_editable">
+                                <input type="checkbox" ng-bind="task.completed"/> Completed
+                            </p>
+                            <p ng-if="!task_editable && !task.completed">Due Date:{{task.due_date}}</p>
+                            <p ng-if="task_editable">Due Date:<input type="date" ng-bind="task.due_date"></p>
+                        </div>
+                    </div> <br />
+                </li>
+                <li class="list-group-item">
+                    <div class="card">
+                        <div class="card-block">
+                            <p class="card-text"><button ng-click="openmodalTask(taskList)">Add a Task</button></p>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+        </div>
+        <div class="col-md-3">
+            <button class="button" ng-click="openTaskListModal()">Add a TaskList</button>
+        </div>
+    </div>
+
+</div>

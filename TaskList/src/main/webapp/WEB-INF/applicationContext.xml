@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+
+       <bean id="genericDao" class="com.gateway.dao.GenericDaoImp" />
+       <bean id="userDao" class="com.gateway.dao.UserDaoImp" />
+       <bean id="taskDao" class="com.gateway.dao.TaskDaoImp"/>
+       <bean id="tasklistDao" class="com.gateway.dao.TaskListDaoImp"/>
+       <bean id="taskService" class="com.gateway.service.TaskServiceImp"/>
+       <bean id="userService" class="com.gateway.service.UserServiceImp"/>
+
+</beans>

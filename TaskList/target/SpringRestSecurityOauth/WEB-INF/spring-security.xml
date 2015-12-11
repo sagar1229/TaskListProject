@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<b:beans xmlns:b="http://www.springframework.org/schema/beans"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns:oauth="http://www.springframework.org/schema/security/oauth2"
+         xmlns:context="http://www.springframework.org/schema/context"
+         xmlns:sec="http://www.springframework.org/schema/security"
+         xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:aop="http://www.springframework.org/schema/aop"
+         xsi:schemaLocation="http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2-2.0.xsd
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+		http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd 
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.1.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd">
+
+
+    <sec:http use-expressions="true" entry-point-ref="clientAuthenticationEntryPoint"
+            >
+        <sec:http-basic/>
+        <sec:anonymous enabled="false"/>
+
+        <sec:intercept-url pattern="/tasklist/*/" access="isFullyAuthenticated()"/>
+        <sec:intercept-url pattern="/tasklist/**" access="isFullyAuthenticated()"/>
+
+
+
+        <sec:custom-filter ref="oauth2ClientContextFilter" after="EXCEPTION_TRANSLATION_FILTER"/>
+        <sec:custom-filter ref="oAuth2AuthenticationProcessingFilter" before="FILTER_SECURITY_INTERCEPTOR"/>
+        <sec:logout logout-url="/logout" success-handler-ref="logoutSuccessHandler"/>
+
+    </sec:http>
+
+    <b:bean id="oAuth2AuthenticationProcessingFilter" class="org.springframework.security.oauth2.client.filter.OAuth2ClientAuthenticationProcessingFilter">
+        <b:constructor-arg name="defaultFilterProcessesUrl" value="/login"/>
+        <b:property name="restTemplate" ref="googleRestTemplate"/>
+        <b:property name="tokenServices" ref="tokenServices"/>
+    </b:bean>
+
+
+    <b:bean id="logoutSuccessHandler" class="com.gateway.secure.LogoutSuccessHandler"/>
+
+    <!--
+        These token classes are mostly a clone of the Spring classes but have the structure modified so that the response
+        from Google can be handled.
+    -->
+    <b:bean id="tokenServices" class="com.gateway.secure.GoogleTokenServices">
+        <b:property name="checkTokenEndpointUrl" value="https://www.googleapis.com/oauth2/v1/tokeninfo"/>
+        <b:property name="clientId" value="964675498365-fm41gtar6ie52klr0f19bmi9lvfr5qsf.apps.googleusercontent.com"/>
+        <b:property name="clientSecret" value="t4Xz71qdpfGzfJipLCc40e_l"/>
+        <b:property name="tokenStore" ref="tokenStore"/>
+        <b:property name="accessTokenConverter">
+            <b:bean class="com.gateway.secure.GoogleAccessTokenConverter">
+                <b:property name="userTokenConverter">
+                    <b:bean class="com.gateway.secure.DefaultUserAuthenticationConverter"/>
+                </b:property>
+            </b:bean>
+        </b:property>
+    </b:bean>
+
+    <!--
+        This authentication entry point is used for all the unauthenticated or unauthorised sessions to be directed to the
+        /phhs URL which is then intercepted by the oAuth2AuthenticationProcessingFilter to trigger authentication from
+        Google.
+    -->
+    <b:bean id="clientAuthenticationEntryPoint" class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+        <b:property name="loginFormUrl" value="/home"/>
+    </b:bean>
+
+    <b:bean id="oauth2ClientContextFilter" class="org.springframework.security.oauth2.client.filter.OAuth2ClientContextFilter"/>
+
+
+
+
+    <sec:authentication-manager alias="alternateAuthenticationManager">
+		<sec:authentication-provider>
+			<sec:user-service>
+				<sec:user name="user" password="password" authorities="DOMAIN_USER"/>
+			</sec:user-service>
+		</sec:authentication-provider>
+	</sec:authentication-manager>
+
+    <b:bean name="springConfiguration" class="com.gateway.secure.SpringConfiguration" />
+    <b:bean id="tokenStore" class="org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore">
+
+    </b:bean>
+
+    <b:import resource="mvc-dispatcher-servlet.xml"     />
+
+</b:beans>
