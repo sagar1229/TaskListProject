@@ -15,8 +15,8 @@ public class TaskDaoImp extends GenericDaoImp<Task>  implements TaskDao {
 
     @Override
     public List<Task> findByTasKList(Long task_id) {
-       Criteria citeria = getCriteria().add(Restrictions.eq("tasklist.id",task_id));
-        return citeria.list();
+       Criteria criteria = getCriteria().add(Restrictions.eq("taskList.id",task_id));
+        return criteria.list();
     }
 
 

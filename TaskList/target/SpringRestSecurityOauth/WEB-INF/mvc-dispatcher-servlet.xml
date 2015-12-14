@@ -52,6 +52,8 @@
 		</property>
 	</bean>
 
+
+
     <tx:annotation-driven transaction-manager="hibernateTransactionManager"/>
 
     <import resource="applicationContext.xml" />

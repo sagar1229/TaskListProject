@@ -35,7 +35,7 @@ App.factory('UserService', ['$http', '$q', function($http, $q){
         },
 
         getTaskLists: function(user_id){
-            return $http.get('http://localhost:8080/api/'+user_id+'/tasklists')
+            return $http.get('http://localhost:8080/api/user/'+user_id+'/taskLists')
                 .then(
                 function(response){
                     return response.data;
@@ -46,8 +46,8 @@ App.factory('UserService', ['$http', '$q', function($http, $q){
             );
         },
 
-        getTasks: function(taskList_id){
-            return $http.get('http://localhost:8080/api/'+taskList_id+'/tasks')
+        getTasks: function(taskList_id,user_id){
+            return $http.get('http://localhost:8080/api/user/'+user_id+'/taskLists/'+taskList_id+'/tasks')
                 .then(
                 function(response){
                     return response.data;
@@ -59,7 +59,7 @@ App.factory('UserService', ['$http', '$q', function($http, $q){
         },
 
         addTaskList: function(taskList,user_id){
-            return $http.post('http://localhost:8080/api/'+ user_id +'/taskLists/',taskList)
+            return $http.post('http://localhost:8080/api/user/'+ user_id +'/taskLists',taskList)
                 .then(
                 function(response){
                     return response.data;
@@ -71,14 +71,27 @@ App.factory('UserService', ['$http', '$q', function($http, $q){
             );
         },
 
-        addTask: function(tasks,taskList_id){
-            return $http.post('http://localhost:8080/api/'+taskList_id+'tasks/',tasks)
+        addTask: function(task,taskList_id,user_id){
+            return $http.post('http://localhost:8080/api/user/'+user_id+'/taskLists/'+taskList_id+'/tasks',task)
                 .then(
                 function(response){
                     return response.data;
                 },
                 function(errResponse){
                     console.error('Error Creating tasks');
+                    return $q.reject(errResponse);
+                }
+            );
+        },
+
+        upDateTask: function(task,taskList_id,user_id){
+            return $http.put('http://localhost:8080/api/user/'+user_id+'/taskLists/'+taskList_id+'/tasks/'+task.id,task)
+                .then(
+                function(response){
+                    return response.data;
+                },
+                function(errResponse){
+                    console.error('Error Updating tasks');
                     return $q.reject(errResponse);
                 }
             );

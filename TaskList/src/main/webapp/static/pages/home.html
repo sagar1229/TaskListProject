@@ -4,11 +4,11 @@
         <div class="col-md-3" ng-repeat="taskList in taskLists track by $index">
             <div class="row">
                <div class="col-md-12" >
-                   <h4 ng-if="!taskList_editable">{{taskList.title}}</h4>
-                   <h4 ng-if="taskList_editable">Title:
-                       <input  type="text" size="8px" ng-bind="taskList.title" />
+                   <h4 ng-if="!taskList.editable">{{taskList.title}}</h4>
+                   <h4 ng-if="taskList.editable">Title:
+                       <input  type="text" size="8px" ng-model="taskList.title" />
                    </h4>
-                   <button type="button" class="btn btn-link" id="cancel" ng-if="taskList_editable" ng-click="cancelTaskList()">
+                   <button type="button" class="btn btn-link" id="cancel" ng-if="taskList.editable" ng-click="cancelTaskList(taskList)">
                        cancel</button>
                    <button type="button" class="btn btn-link editTaskList"  ng-click="editTaskList(taskList)">Edit</button>
                </div>
@@ -21,20 +21,20 @@
                 <li class="list-group-item " ng-repeat="task in taskList.tasks">
                     <div class="card">
                         <div class="card-block">
-                            <del ng-if="task.completed"><h4 class="card-title" ng-if="!task_editable">{{task.title}}</h4>
+                            <del ng-if="task.completed"><h4 class="card-title" ng-if="!task.editable">{{task.title}}</h4>
                             </del>
-                            <h4 class="card-title" ng-if="!task_editable && !task.completed">{{task.title}}</h4>
-                            <button type="button" class="btn btn-link" ng-if="task_editable" id="cancel" ng-click="cancel()">
+                            <h4 class="card-title" ng-if="!task.editable && !task.completed">{{task.title}}</h4>
+                            <button type="button" class="btn btn-link" ng-if="task.editable" id="cancel" ng-click="cancel(task)">
                                 cancel</button>
-                            <button type="button" class="btn btn-link editTask"  ng-click="editTask(task)">Edit</button>
-                            <p ng-if="task_editable">Title:
-                                <input class="card-tile" type="text" size="10px" ng-bind="task.title" />
+                            <button type="button" class="btn btn-link editTask"  ng-click="editTask(task,taskList)">Edit</button>
+                            <p ng-if="task.editable">Title:
+                                <input class="card-tile" type="text" size="10px" ng-model="task.title" />
                             </p>
-                            <p class="card-text" ng-if="task_editable">
-                                <input type="checkbox" ng-bind="task.completed"/> Completed
+                            <p class="card-text" ng-if="task.editable">
+                                <input type="checkbox" ng-model="task.completed"/> Completed
                             </p>
-                            <p ng-if="!task_editable && !task.completed">Due Date:{{task.due_date}}</p>
-                            <p ng-if="task_editable">Due Date:<input type="date" ng-bind="task.due_date"></p>
+                            <p ng-if="!task.editable && !task.completed">Due Date:{{task.dueDate}}</p>
+                            <p ng-if="task.editable">Due Date:<input type="text" placeholder="yyyy-mm-dd" ng-model="task.dueDate"></p>
                         </div>
                     </div> <br />
                 </li>

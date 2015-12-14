@@ -7,7 +7,9 @@ import com.gateway.model.UserProfile;
 import com.gateway.model.User;
 import com.gateway.service.TaskService;
 import com.gateway.service.UserService;
+import com.gateway.util.DateFormatter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -17,7 +19,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import javax.transaction.Transactional;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -26,9 +30,8 @@ import java.util.Map;
 /**
  * Created by Jayavardhan on 12/9/15.
  */
-
+@Transactional
 @RestController
-
 public class MainController {
 
     @Autowired
@@ -40,6 +43,7 @@ public class MainController {
     @Autowired
     private TaskService taskService;
 
+    private DateFormatter dateFormatter = DateFormatter.getInstance();
 
     @RequestMapping(method = RequestMethod.GET,value = "/tasklist/home")
     public ModelAndView  getUserInfo() throws JsonProcessingException {
@@ -88,38 +92,43 @@ public class MainController {
         return new ResponseEntity<User>(currentUser, HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/api/{user_id}/tasklists",method = RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<TaskList>> getTasklists(@PathVariable("user_id") Long user_id){
+    @Transactional
+    @RequestMapping(value = "/api/user/{user_id}/taskLists",method = RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Map<String,Object>>> getTaskLists(@PathVariable("user_id") Long user_id){
 
         System.out.println("Fetching TaskList with user_id  " + user_id);
         List<TaskList> taskLists = taskService.findTaskListByUser(user_id);
+        List<Map<String,Object>> returnMap = taskService.getTaskListByUser(taskLists);
+
 
         if(taskLists==null){
             System.out.println("No TaskLists with user: " + user_id);
-            return new ResponseEntity<List<TaskList>>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<List<TaskList>>(taskLists,HttpStatus.OK);
+        return new ResponseEntity<>(returnMap,HttpStatus.OK);
     }
 
-    @RequestMapping(value = "/api/{taskList_id}/tasks",method = RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Task>> getTasks(@PathVariable("taskList_id") Long taskList_id){
+    @Transactional
+    @RequestMapping(value = "/api/user/{user_id}/taskLists/{taskList_id}/tasks",method = RequestMethod.GET,produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Map<String,Object>>> getTasks(@PathVariable("taskList_id") Long taskList_id){
 
         System.out.println("Fetching TaskList with user_id  " + taskList_id);
         List<Task> tasks = taskService.findTaskByTaskList(taskList_id);
+        List<Map<String,Object>> returnMap = taskService.getTasksByUser(tasks);
 
-        if(tasks==null){
+        if(returnMap==null){
             System.out.println("No TaskLists with usesr: " + taskList_id);
-            return new ResponseEntity<List<Task>>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<List<Task>>(tasks,HttpStatus.OK);
+        return new ResponseEntity<>(returnMap,HttpStatus.OK);
     }
 
 
-    @RequestMapping(value = "/api/{user_id}/taskLists/", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/user/{user_id}/taskLists", method = RequestMethod.POST)
     public ResponseEntity<Map> addTaskList(@PathVariable Long user_id,@RequestBody Map map) {
-        System.out.println("Creating Tasklist " + map.get("title"));
+        System.out.println("Creating TaskList " + map.get("title"));
         TaskList taskList = new TaskList();
         taskList.setTilte((String) map.get("title"));
         taskList.setCreatedOn(new Date());
@@ -129,19 +138,41 @@ public class MainController {
         return new ResponseEntity<Map>(map, HttpStatus.CREATED);
     }
 
-    @RequestMapping(value = "/api/{tasklist_id}/tasks/", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/user/{user_id}/taskLists/{taskList_id}/tasks", method = RequestMethod.POST)
     public ResponseEntity<Map> addTask(@PathVariable Long taskList_id,@RequestBody Map map) {
         System.out.println("Creating Task " + map.get("title"));
         Task task = new Task();
         task.setCreatedOn(new Date());
         task.setLastTimeEdited(null);
-        task.setDueDate((Date) map.get("dueDate"));
+        try {
+            task.setDueDate(dateFormatter.parseDefaultDateString((String)map.get("dueDate")));
+        } catch (ParseException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         task.setIsCompleted(false);
         task.setIsImportant(false);
         task.setTitle((String) map.get("title"));
         task.setTaskList(taskService.findTaskListById(taskList_id));
         taskService.addTask(task);
-        return new ResponseEntity<Map>(map, HttpStatus.CREATED);
+        return new ResponseEntity<>(map, HttpStatus.CREATED);
+    }
+
+    @Transactional
+    @RequestMapping(value="/api/user/{user_id}/taskLists/{taskList_id}/tasks/{task_id}",method = RequestMethod.PUT)
+    public ResponseEntity<Map> upDateTask(@PathVariable("task_id") Long task_id,@RequestBody Map map){
+        Task task = taskService.findTaskById(task_id);
+        task.setLastTimeEdited(new Date());
+        try {
+            task.setDueDate(dateFormatter.parseDefaultDateString((String)map.get("dueDate")));
+        } catch (ParseException e) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        task.setIsCompleted((Boolean)map.get("completed"));
+        task.setIsImportant(false);
+        task.setTitle((String) map.get("title"));
+        task = taskService.updateTask(task);
+        map.replace("dueDate",dateFormatter.parseDate(task.getDueDate()));
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
     private UserProfile getGoogleProfile() {

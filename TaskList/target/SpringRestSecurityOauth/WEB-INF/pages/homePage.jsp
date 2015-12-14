@@ -63,7 +63,6 @@
             </div>
         </div>
     </div>
-    <div><button ng-click="getTaskLists(user.id)">getLists</button></div>
     <div class="panel panel-default">
         <ng-view></ng-view>
     </div>
