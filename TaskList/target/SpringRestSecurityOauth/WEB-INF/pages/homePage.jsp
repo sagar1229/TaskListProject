@@ -50,7 +50,9 @@
                         Task List
                     </h3>
                 </div>
-                <div class="topcorner"><a href="/logout">Logout</a></div>
+                <div class="topcorner">
+                    <a href="/logout">Logout</a>
+                </div>
             </div>
         </div>
         <div class="panel-body">
@@ -59,6 +61,7 @@
                     <h3 align="center">
                         {{user.name}}
                     </h3>
+                    <p></p>
                 </div>
             </div>
         </div>
@@ -67,7 +70,6 @@
         <ng-view></ng-view>
     </div>
 </div>
-
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.28/angular-route.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>

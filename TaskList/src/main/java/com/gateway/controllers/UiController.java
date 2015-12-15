@@ -35,7 +35,7 @@ public class UiController {
             Authentication authentication = googleTokenServices.loadAuthentication(accessToken);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
-        return "redirect:/tasklist/home";
+        return "redirect:/taskList/home";
     }
 
 
@@ -45,7 +45,7 @@ public class UiController {
         if(authentication == null){
             return "login";
         }
-        return "redirect:/api/welcome";
+        return "redirect:/taskList/home";
     }
 
 

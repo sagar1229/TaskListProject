@@ -45,7 +45,7 @@ public class MainController {
 
     private DateFormatter dateFormatter = DateFormatter.getInstance();
 
-    @RequestMapping(method = RequestMethod.GET,value = "/tasklist/home")
+    @RequestMapping(method = RequestMethod.GET,value = "/taskList/home")
     public ModelAndView  getUserInfo() throws JsonProcessingException {
 
         ModelAndView modelAndView = new ModelAndView("homePage");
@@ -154,6 +154,7 @@ public class MainController {
         task.setTitle((String) map.get("title"));
         task.setTaskList(taskService.findTaskListById(taskList_id));
         taskService.addTask(task);
+        map.replace("dueDate",dateFormatter.parseDate(task.getDueDate()));
         return new ResponseEntity<>(map, HttpStatus.CREATED);
     }
 

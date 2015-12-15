@@ -12,6 +12,6 @@
 </head>
 <body>
 logout succesful
-now u have to login again for  open the protected <a href="/tasklist/home">resource</a>
+now u have to login again for  open the protected <a href="/taskList/home">resource</a>
 </body>
 </html>

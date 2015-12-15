@@ -9,6 +9,7 @@ angular.module('myApp').controller('UserController', ['$scope','UserService','$m
     var self = this;
     $scope.task_editable=false;
     $scope.taskList_editable=false;
+    $scope.user ={};
 
     self.updateUser = function(user, id){
         UserService.updateUser(user, id)

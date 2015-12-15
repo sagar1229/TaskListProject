@@ -8,7 +8,7 @@ App.factory('UserService', ['$http', '$q', function($http, $q){
     return {
 
         updateUser: function(user, id){
-            return $http.put('http://localhost:8080/api/user/'+id, user)
+            return $http.put('/api/user/'+id, user)
                 .then(
                 function(response){
                     return response.data;
@@ -21,7 +21,7 @@ App.factory('UserService', ['$http', '$q', function($http, $q){
         },
 
         getUser: function(id){
-            return $http.get('http://localhost:8080/api/user/'+id)
+            return $http.get('/api/user/'+id)
                 .then(
                 function(response){
                     return response.data;
@@ -35,7 +35,7 @@ App.factory('UserService', ['$http', '$q', function($http, $q){
         },
 
         getTaskLists: function(user_id){
-            return $http.get('http://localhost:8080/api/user/'+user_id+'/taskLists')
+            return $http.get('/api/user/'+user_id+'/taskLists')
                 .then(
                 function(response){
                     return response.data;
@@ -47,7 +47,7 @@ App.factory('UserService', ['$http', '$q', function($http, $q){
         },
 
         getTasks: function(taskList_id,user_id){
-            return $http.get('http://localhost:8080/api/user/'+user_id+'/taskLists/'+taskList_id+'/tasks')
+            return $http.get('/api/user/'+user_id+'/taskLists/'+taskList_id+'/tasks')
                 .then(
                 function(response){
                     return response.data;
@@ -59,7 +59,7 @@ App.factory('UserService', ['$http', '$q', function($http, $q){
         },
 
         addTaskList: function(taskList,user_id){
-            return $http.post('http://localhost:8080/api/user/'+ user_id +'/taskLists',taskList)
+            return $http.post('/api/user/'+ user_id +'/taskLists',taskList)
                 .then(
                 function(response){
                     return response.data;
@@ -72,7 +72,7 @@ App.factory('UserService', ['$http', '$q', function($http, $q){
         },
 
         addTask: function(task,taskList_id,user_id){
-            return $http.post('http://localhost:8080/api/user/'+user_id+'/taskLists/'+taskList_id+'/tasks',task)
+            return $http.post('/api/user/'+user_id+'/taskLists/'+taskList_id+'/tasks',task)
                 .then(
                 function(response){
                     return response.data;
@@ -85,7 +85,7 @@ App.factory('UserService', ['$http', '$q', function($http, $q){
         },
 
         upDateTask: function(task,taskList_id,user_id){
-            return $http.put('http://localhost:8080/api/user/'+user_id+'/taskLists/'+taskList_id+'/tasks/'+task.id,task)
+            return $http.put('/api/user/'+user_id+'/taskLists/'+taskList_id+'/tasks/'+task.id,task)
                 .then(
                 function(response){
                     return response.data;
