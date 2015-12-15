@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<div ng-app="myApp" >
+    <div class="modal-header">
+        <h4 class="panel-title section-title" id="myModalLabel">
+            Add Task
+        </h4>
+    </div>
+    <div class="modal-body">
+        <p>Name The Title:</p><input  type="text" size="15px" ng-model="task.title" />
+        <p>Due Date:</p><input type="date" ng-model="task.dueDate"/>
+    </div>
+
+    <div class="modal-footer buttonArea">
+        <button class="btn" data-ng-click="saveTaskModal()">Save</button>
+        <button class="btn" data-ng-click="closeTaskModal()">Close</button>
+    </div>
+
+</div>
+</body>
+</html>
